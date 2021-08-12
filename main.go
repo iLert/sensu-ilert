@@ -143,7 +143,12 @@ func manageIncident(event *corev2.Event) error {
 		Details:     details,
 	}
 
-	input := &ilert.CreateEventInput{Event: ilertEvent}
+	endpointURL := fmt.Sprintf("/api/v1/events/sensu/%s", config.authToken)
+
+	input := &ilert.CreateEventInput{
+		Event: ilertEvent,
+		URL:   &endpointURL,
+	}
 	result, err := client.CreateEvent(input)
 	if err != nil {
 		if apiErr, ok := err.(*ilert.GenericAPIError); ok {

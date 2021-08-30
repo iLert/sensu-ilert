@@ -22,7 +22,24 @@ The Sensu iLert Handler is a [Sensu Event Handler][3] which manages
 
 ### Help output
 ```
+The Sensu Go Ilert handler for incident management
 
+Usage:
+  sensu-ilert-handler [flags]
+  sensu-ilert-handler [command]
+
+Available Commands:
+  help        Help about any command
+  version     Print the version number of this plugin
+
+Flags:
+  -k, --dedup-key-template string   The Ilert deduplication key template, can be set with ILERT_DEDUP_KEY_TEMPLATE (default "{{.Entity.Name}}-{{.Check.Name}}")
+  -d, --details-template string     The template for the alert details, can be set with ILERT_DETAILS_TEMPLATE (default full event JSON)
+  -h, --help                        help for sensu-ilert-handler
+  -S, --summary-template string     The template for the alert summary, can be set with ILERT_SUMMARY_TEMPLATE (default "{{.Entity.Name}}/{{.Check.Name}} : {{.Check.Output}}")
+  -t, --token string                The Ilert API authentication token, can be set with ILERT_SENSU_TOKEN
+
+Use "sensu-ilert-handler [command] --help" for more information about a command.
 ```
 
 ### Deduplication key
@@ -35,10 +52,33 @@ is a Golang template containing the event values and defaults to
 ## Configuration
 ### Asset registration
 
+The easiest way to get this handler added to your Sensu environment, is to add it as an asset from Bonsai:
+
+```sh
+sensuctl asset add ilert/sensu-ilert --rename sensu-ilert-handler
+```
+
+See `sensuctl asset --help` for details on how to specify version.
+
 ### Handler definition
 
 ```yml
-
+type: Handler
+api_version: core/v2
+metadata:
+  name: ilert
+  namespace: default
+spec:
+  type: pipe
+  command: sensu-ilert-handler
+  timeout: 10
+  runtime_assets:
+  - ilert/sensu-ilert
+  filters:
+  - is_incident
+  secrets:
+  - name: ILERT_SENSU_TOKEN
+    secret: ilert_sensu_token
 ```
 
 ### Environment variables

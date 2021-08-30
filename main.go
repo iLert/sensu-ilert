@@ -191,6 +191,7 @@ func getIlertPriority(event *corev2.Event, statusMapJson string) (string, error)
 
 	// Default to these values is no status map is found
 	// The default of ilert priority is High
+	// Priority is unused as for now
 	priority := "high"
 	// if event.Check.Status < 3 {
 	// 	priorities := []string{"low", "high", "critical"}
